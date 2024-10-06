@@ -24,7 +24,7 @@ class YOLOv1(nn.Module):
                 nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
                 nn.LeakyReLU(negative_slope=0.1),
                 nn.MaxPool2d(kernel_size=2, stride=2),
-                nn.Conv2d(64, 194, kernel_size=3, stride=1, padding=1),
+                nn.Conv2d(64, 192, kernel_size=3, stride=1, padding=1),
                 nn.LeakyReLU(negative_slope=0.1),
                 nn.MaxPool2d(kernel_size=2, stride=2),
             )
@@ -74,7 +74,7 @@ class YOLOv1(nn.Module):
             nn.LeakyReLU(negative_slope=0.1),
         )
 
-        self.layers.append(*[block] * 2)
+        self.layers.append(nn.Sequential(*[block] * 2))
 
         # Sixth block
         self.layers.append(
