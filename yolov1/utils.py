@@ -8,11 +8,11 @@ def get_iou(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     Calculate iou for prediction versus ground truth
 
     Params:
-        pred: prediction of shape (N, 7, 7, B)
-        target: ground truth of shape (N, 7, 7, B)
+        pred: prediction of shape (N, S, S, B)
+        target: ground truth of shape (N, S, S, B)
 
     Output:
-        ious: shape (N, 7, 7, B, B)
+        ious: shape (N, S, S, B, B)
 
     Notes:
         The iou is calculated on each prediction and each ground truth
@@ -100,5 +100,15 @@ def get_bbox_attr(box: torch.Tensor, attr: str) -> torch.Tensor:
     return box[..., attr : settings.B * 5 : 5]
 
 
-pred = torch.randn(5, 7, 7, 30)
-target = torch.randn(5, 7, 7, 30)
+def get_classes(box: torch.Tensor) -> torch.Tensor:
+    """
+    Get classification attributes from box
+
+    Params:
+        box: shape (N, S, S, B * 5 + C)
+
+    Output:
+        classification: of shape (N, S, S, C)
+    """
+
+    return box[..., settings.BOX : :]
