@@ -1,7 +1,7 @@
 import torch
 
 from torch import nn
-from yolov1.config import settings
+from config import settings
 
 
 class Reshape(nn.Module):
