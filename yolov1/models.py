@@ -1,6 +1,7 @@
 import torch
 
 from torch import nn
+from config import settings
 
 
 class Reshape(nn.Module):
@@ -91,8 +92,8 @@ class YOLOv1(nn.Module):
                 nn.Linear(7 * 7 * 1024, 4096),
                 nn.LeakyReLU(negative_slope=0.1),
                 nn.Dropout(),
-                nn.Linear(4096, 7 * 7 * 30),
-                Reshape(-1, 7, 7, 30),
+                nn.Linear(4096, settings.S * settings.S * settings.BOX),
+                Reshape(-1, settings.S, settings.S, settings.BOX),
             )
         )
 
