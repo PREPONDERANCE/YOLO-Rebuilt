@@ -1,5 +1,9 @@
-from PIL import Image
+import torch
 import torchvision.transforms as transforms
+
+from PIL import Image
+from models import YOLOv1
+from loss import SSELoss
 
 
 def load_and_preprocess_image(image_path):
@@ -22,5 +26,13 @@ def load_and_preprocess_image(image_path):
 # Example usage
 image_path = "/Users/mac/Downloads/sample-image.jpeg"
 image_tensor = load_and_preprocess_image(image_path)
+image_tensor = image_tensor.unsqueeze(0)
 
-print(image_tensor.shape)
+model = YOLOv1()
+loss_fn = SSELoss()
+optimzer = torch.optim.Adam(model.parameters(), lr=1e-4)
+
+pred = model(image_tensor)
+loss = loss_fn(pred, torch.zeros_like(pred))
+
+print(loss.item())
