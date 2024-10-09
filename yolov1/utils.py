@@ -7,14 +7,17 @@ def get_iou(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """
     Calculate iou for prediction versus ground truth
 
-    Params:
+    Params
+    ------
         pred: prediction of shape (N, S, S, B)
         target: ground truth of shape (N, S, S, B)
 
-    Output:
+    Output
+    -------
         ious: shape (N, S, S, B, B)
 
-    Notes:
+    Notes
+    -----
         The iou is calculated on each prediction and each ground truth
         bounding box. Suppose there're two predictions p1, p2 and two
         ground truth boxes t1, t2. The output will be
@@ -45,13 +48,16 @@ def get_coords(box: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Return top left and bottom right coordinates of the given box
 
-    Params:
+    Params
+    ------
         box: shape (N, S, S, B * 5 + C)
 
-    Output:
+    Output
+    ------
         coordinates: two tensors, both of shape (N, S, S, B, 2).
 
-    Notes:
+    Notes
+    -----
         Each tensor in the tuple is of shape (N, S, S, B, 2) in which the
         last dimension represents [x, y]; B represents the number of boxes.
         Overall, the last dimension can be abstracted as [[x1,y1],[x2,y2],
@@ -76,14 +82,17 @@ def get_bbox_attr(box: torch.Tensor, attr: str) -> torch.Tensor:
     """
     Get bounding box attribute
 
-    Params:
+    Params
+    ------
         box: bounding box of shape (N, S, S, B * 5 + 2)
         attr: the attribute to require, value range: {"x", "y", "w", "h", "c"}
 
-    Output:
+    Output
+    ------
         attributes: shape (N, S, S, B)
 
-    Notes:
+    Notes
+    -----
         The last dimension is shaped in the following format.
         Format: [b1_x, b1_y, b1_w, b1_h, b1_c, b2_x, ..., b2_h, C1, C2, ..., C20]
         B number of (default to 2) predicted bounding boxes containing five attributes,
@@ -104,10 +113,12 @@ def get_classes(box: torch.Tensor) -> torch.Tensor:
     """
     Get classification attributes from box
 
-    Params:
+    Params
+    ------
         box: shape (N, S, S, B * 5 + C)
 
-    Output:
+    Output
+    -------
         classification: of shape (N, S, S, C)
     """
 

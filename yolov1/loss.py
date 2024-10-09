@@ -15,11 +15,13 @@ class SSELoss(nn.Module):
         """
         Perform Sum Squared Error on `pred` and `target`
 
-        Params:
+        Params
+        ------
             pred: predictions of shape (N, S, S, B)
             target: ground truth of shape (N, S, S, B)
 
-        Output:
+        Output
+        ------
             sse: the result of sum squared error loss
         """
 
@@ -30,17 +32,21 @@ class SSELoss(nn.Module):
 
     def forward(self, pred: torch.Tensor, target: torch.Tensor):
         """
-        Params:
+        Params
+        ------
             pred: output predictions of shape (N, S, S, B * 5 + C)
             target: ground truth of shape (N, S, S, B * 5 + C)
 
-        Output:
+        Output
+        ------
             Scalar value indicating loss
 
-        Reference:
+        Reference
+        ---------
             https://arxiv.org/pdf/1506.02640
 
-        Notes:
+        Notes
+        -----
             The identity function returns 1 if there's a bounding box predicted
             in that cell and this box is "responsible" for this cell. (Owns the
             most IOU score out of the 2 bounding box [B=2 in YOLOv1])
@@ -62,10 +68,13 @@ class SSELoss(nn.Module):
         y_pred, y_tar = obj * get_bbox_attr(pred, attr="y"), obj * get_bbox_attr(target, attr="y")
         y_loss = self.lambda_coord * self._sse(y_pred, y_tar)
 
-        w_pred, w_tar = obj * get_bbox_attr(pred, attr="w"), obj * get_bbox_attr(target, attr="w")
-        h_pred, h_tar = obj * get_bbox_attr(pred, attr="h"), obj * get_bbox_attr(target, attr="h")
-        w_pred = torch.sign(w_pred) * torch.sqrt(torch.abs(w_pred))
-        h_pred = torch.sign(h_pred) * torch.sqrt(torch.abs(h_pred))
+        w_pred, w_tar = get_bbox_attr(pred, attr="w"), get_bbox_attr(target, attr="w")
+        h_pred, h_tar = get_bbox_attr(pred, attr="h"), get_bbox_attr(target, attr="h")
+
+        w_pred = obj * torch.sign(w_pred) * torch.sqrt(torch.abs(w_pred))
+        h_pred = obj * torch.sign(h_pred) * torch.sqrt(torch.abs(h_pred))
+        w_tar = obj * torch.sqrt(w_tar)
+        h_tar = obj * torch.sqrt(h_tar)
 
         w_loss = self.lambda_coord * self._sse(w_pred, w_tar)
         h_loss = self.lambda_coord * self._sse(h_pred, h_tar)
