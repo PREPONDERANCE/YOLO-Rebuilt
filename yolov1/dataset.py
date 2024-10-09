@@ -88,6 +88,9 @@ class VocDataset:
 
         return data, new_label
 
+    def __len__(self):
+        return len(self.data)
+
 
 class YOLOv1DataSet(Dataset):
     """
@@ -111,7 +114,7 @@ class YOLOv1DataSet(Dataset):
                 transform=transforms.Compose(
                     [
                         transforms.ToTensor(),
-                        transforms.Resize(settings.IMG_SIZE),
+                        transforms.Resize((settings.IMG_SIZE, settings.IMG_SIZE)),
                     ]
                 ),
             )
@@ -120,15 +123,16 @@ class YOLOv1DataSet(Dataset):
 
         self.augment = augment
         self.normalize = normalize
+        self.cls = self.dataset.classifications
 
     def __getitem__(self, index):
         gt = torch.zeros(settings.S, settings.S, settings.BOX)
-
         data, label = self.dataset[index]
-        cls = self.dataset.classifications
 
         w, h = label["width"], label["height"]
         w_scale, h_scale = w / settings.IMG_SIZE, h / settings.IMG_SIZE
+
+        # parallel operation
 
         for i, bbox in enumerate(label["bbox"]):
             cname, xmin, ymin, xmax, ymax = bbox
@@ -143,7 +147,7 @@ class YOLOv1DataSet(Dataset):
             b_width = xmax - xmin
             b_height = ymax - ymin
             b_cls = torch.zeros(settings.C)
-            b_cls[cls[cname]] = 1
+            b_cls[self.cls[cname]] = 1
 
             gi = int(x_center // (settings.IMG_SIZE / settings.S))
             gj = int(y_center // (settings.IMG_SIZE / settings.S))
