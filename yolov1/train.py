@@ -18,7 +18,9 @@ loss_fn = SSELoss()
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-6)
 
-for i in range(2):
+for i in range(10):
+    train_loss = 0
+
     for data, label in train_data:
         model.train()
 
@@ -29,4 +31,7 @@ for i in range(2):
         loss.backward()
         optimizer.step()
 
-        print("Loss =", loss.item() / len(train_data))
+        train_loss = loss.item() / len(train_data)
+
+    if not i % 5:
+        print(train_loss)
